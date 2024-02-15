@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Lab0.h"
 #include "Container.h"
+#include <ostream>
 
 using namespace std;
 
@@ -15,10 +16,11 @@ int main() {
     boxes.push_back(b1);
     boxes.push_back(b2);
     boxes.push_back(b3);
-    for(Box box:boxes){
-        cout<<box<<endl;
-    }
-    Container give_me_a_name(boxes,1,1,1,1000);
     cout << flag << endl;
     cout << flag1 << endl;
+    Container container(boxes,1,1,1,1000);
+    for(Box box: container.getBoxes()){
+        cout<<"BoxFromBoxes "<<box<<endl;
+    }
+    cout<<container.getMaxWeight()<<endl;
 }
