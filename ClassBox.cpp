@@ -13,8 +13,7 @@ using namespace MyNameSpace;
             value = v;
         }
         else{
-            cout<<"Ошибка: Некорректно введены значения"<<endl;
-            exit(-1);
+            throw std::invalid_argument("Incorrect value of argument");
         }
     }
     int Box:: getLength() const {
@@ -56,18 +55,9 @@ using namespace MyNameSpace;
     void Box:: setValue(int value) {
         Box::value = value;
     }
-    void Box:: fatal(int i) {
-        cout<<"Ошибка: некорректные данные"<<endl;
-        exit(i);
-
-    }
-
-
-
     int Box:: totalValue(vector<Box> boxes) {
         if (boxes.empty()) {
-            fatal(1);
-            exit(-1);
+            throw std::invalid_argument("Boxes cannot be empty");
         }
         int totalValue = 0;
         for (auto &box: boxes) {
@@ -77,7 +67,7 @@ using namespace MyNameSpace;
     }
 
     bool Box:: checkSum(vector<Box> boxes, int maxSum) {
-        if (boxes.empty()) fatal(-1);
+        if (boxes.empty()) throw std::invalid_argument("Boxes cannot be empty");
         int sum = 0;
         for (auto box: boxes) {
             sum += box.getLength() + box.getWidth() + box.getHeight();
@@ -86,7 +76,7 @@ using namespace MyNameSpace;
     }
 
     double Box:: maxWeight(vector<Box> boxes, double maxV) {
-        if (boxes.empty()) fatal(-1);
+        if (boxes.empty()) throw std::invalid_argument("Boxes cannot be empty");
         double maxWeight = 0;
         for (auto box: boxes) {
             if (box.getLength() * box.getWidth() * box.getHeight() <= maxV) {
@@ -97,7 +87,7 @@ using namespace MyNameSpace;
     }
 
     bool Box:: canBeStacked(vector<Box> boxes) {
-        if (boxes.empty()) fatal(-1);
+        if (boxes.empty()) throw std::invalid_argument("Boxes cannot be empty");
         if (boxes.empty()) {
             return true;
         }
@@ -125,3 +115,21 @@ using namespace MyNameSpace;
         return b1.getLength() == b2.getLength() && b1.getWidth() == b2.getWidth() && b1.getHeight() == b2.getHeight() &&
                b2.getWeight() == b2.getWeight() && b1.getValue() == b2.getValue();
     }
+std::ostream &operator<<(std::ostream &os, const Box &box) {
+    os << "length:" << box.getLength() << "  width:" << box.getWidth() << "  height:" << box.getHeight() << "  weight:"
+       << box.getWeight()
+       << "  value:" << box.getValue();
+    return os;
+}
+
+std::istream &operator>>(std::istream &is, Box &box) {
+    int length, height, width,  value;
+    double weight;
+    is >> length >> height >> width>> value >> weight;
+    box.setLength(length);
+    box.setHeight(height);
+    box.setWidth(width);
+    box.setValue(value);
+    box.setWeight(weight);
+    return is;
+}

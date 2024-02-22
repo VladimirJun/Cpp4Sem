@@ -38,8 +38,6 @@ namespace MyNameSpace {
 
         void setValue(int value);
 
-        void fatal(int i);
-
         int totalValue(std::vector<Box> boxes);
 
         bool checkSum(std::vector<Box> boxes, int maxSum);
