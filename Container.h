@@ -5,25 +5,24 @@
 #include "ClassBox.h"
 
 #ifndef C_CONTAINER_H
-#endif //C___CONTAINER_H
+#endif //C_CONTAINER_H
 using namespace std;
 namespace MyNameSpace {
     class Container {
     private:
 
-        vector<Box> boxes;
+        vector <Box> boxes;
         double length;
         double width;
         double height;
         double maxWeight;
     public:
-        Container(vector<Box> boxes, double length, double width, int height, double maxWeight);
+        Container(vector <Box> boxes, double length, double width, int height, double maxWeight);
 
-        explicit Container(double maxWeight);
 
-        const vector<Box> &getBoxes() const;
+        const vector <Box> &getBoxes() const;
 
-        void setBoxes(const vector<Box> &boxes);
+        void setBoxes(const vector <Box> &boxes);
 
         double getLength() const;
 
@@ -41,7 +40,7 @@ namespace MyNameSpace {
 
         void setMaxWeight(double maxWeight);
 
-                int GetQuantityOfBox();
+        int GetQuantityOfBox();
 
         double getTotalWeight();
 
@@ -57,7 +56,6 @@ namespace MyNameSpace {
 
         void changeBox(int index, Box boxToChange) const;
 
-        friend ostream &operator<<(ostream &os, const Container &container);
     };
 
     class ContainerException {
@@ -71,15 +69,8 @@ namespace MyNameSpace {
 
     string getMessage();
 
-    int addNewBox(Box boxToAdd);
 
-    void removeBox(int index);
-
-    ostream &operator<<(ostream &os, Container container);
+    ostream &operator<<(ostream &os, const MyNameSpace::Container &container);
 
     istream &operator>>(istream &is, Container &container);
-
-    Box getBoxIndex(int index);
-
-    void changeBox(int index, Box boxToChange);
 }

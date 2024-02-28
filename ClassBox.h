@@ -4,8 +4,10 @@
 #define C_CLASSBOX_H
 
 #endif //C_CLASSBOX_H
+
 #include <iostream>
 #include <vector>
+
 namespace MyNameSpace {
     class Box {
     private:
@@ -38,14 +40,11 @@ namespace MyNameSpace {
 
         void setValue(int value);
 
-        int totalValue(std::vector<Box> boxes);
-
-        bool checkSum(std::vector<Box> boxes, int maxSum);
-
-        double maxWeight(std::vector<Box> boxes, double maxV);
-
-        bool canBeStacked(std::vector<Box> boxes);
-
-        static bool equal(Box b1, Box b2);
+        bool operator==(const Box &other) const;
     };
+
+    std::istream &operator>>(std::istream &is, Box &box);
+
+    std::ostream &operator<<(std::ostream &os, const Box &box);
+
 }

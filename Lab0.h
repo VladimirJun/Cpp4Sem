@@ -5,24 +5,28 @@
 #include <iostream>
 #include <vector>
 
-struct StructBox{
+struct StructBox {
     int length;
     int width;
     int height;
     double weight;
     int value;
+
+    StructBox(int l, int wdth, int h, double wght, int v);
+
+    bool operator==(const StructBox &other) const;
 };
 
-using namespace std;
+std::ostream &operator<<(std::ostream &os, const StructBox &box);
+std::istream& operator>>(std::istream& is, StructBox box);
 
-int  totalValue(vector<StructBox> boxes);
 
-bool checkSum(vector<StructBox> boxes, int maxSum);
 
-bool canBeStacked(std::vector<StructBox> boxes);
-bool equal(StructBox b1, StructBox b2);
-ostream &operator<<(ostream &os, const StructBox &box);
-istream& operator>>(istream& is, StructBox box);
+int totalValue(std::vector<StructBox> &boxes);
+
+bool checkSum(std::vector<StructBox> &boxes, int maxSum);
+
+bool canBeStacked(std::vector<StructBox> &boxes);
 
 
 #endif //C_LAB0_H
