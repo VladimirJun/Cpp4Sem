@@ -4,13 +4,6 @@
 #include <cassert>
 #include "Lab0.h"
 
-//task1
-//struct StructBox{
-//    int length;
-//    int width;
-//    int height;
-//    double weight;
-//    int value;
 
 
 
@@ -46,7 +39,7 @@ bool checkSum(std::vector<StructBox>* boxes, int maxSum) {
     return sum <= maxSum;
 }
 //task4
-double maxWeight(std::vector<StructBox>* boxes, double maxV) {
+double maxWeight(std::vector<StructBox> *boxes, double maxV) {
     if (boxes== nullptr||!boxes->empty()) static_assert("boxes cannot be empty");
     double maxWeight = 0;
     for (auto box : *boxes) {
@@ -58,7 +51,7 @@ double maxWeight(std::vector<StructBox>* boxes, double maxV) {
 }
 
 //task5
-bool canBeStacked(std::vector<StructBox> boxes) {
+ bool  canBeStacked(std::vector<StructBox> boxes) {
     if (boxes.empty()) {
         return true;
     }

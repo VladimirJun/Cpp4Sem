@@ -48,14 +48,11 @@ namespace MyNameSpace {
 
         Box getExactBoxIndex(int index);
 
-        int addNewBox(Box boxToAdd);
+        int addNewBox(Box &boxToAdd);
 
         void removeBox(int index);
 
-        Box getBoxIndex(int index) const;
-
-        void changeBox(int index, Box boxToChange) const;
-
+        Box operator[](int index);
     };
 
     class ContainerException {
@@ -64,7 +61,7 @@ namespace MyNameSpace {
         string getMessage() const;
 
     public:
-        ContainerException(const char string[53]);
+        explicit ContainerException(const char string[53]);
     };
 
     string getMessage();

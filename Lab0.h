@@ -18,15 +18,16 @@ struct StructBox {
 };
 
 std::ostream &operator<<(std::ostream &os, const StructBox &box);
-std::istream& operator>>(std::istream& is, StructBox box);
+
+std::istream &operator>>(std::istream &is, StructBox box);
 
 
+int totalValue(std::vector<StructBox> *boxes);
 
-int totalValue(std::vector<StructBox> &boxes);
+bool checkSum(std::vector<StructBox> *boxes, int maxSum);
 
-bool checkSum(std::vector<StructBox> &boxes, int maxSum);
+double maxWeight(std::vector<StructBox> *boxes, double maxV);
 
-bool canBeStacked(std::vector<StructBox> &boxes);
-
+bool canBeStacked(std::vector<StructBox> boxes);
 
 #endif //C_LAB0_H

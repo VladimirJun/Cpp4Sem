@@ -11,10 +11,11 @@ namespace MyNameSpace {
                          double wdth,
                          int h,
                          double mW) {
-        assert(l > 0);
-        assert(wdth > 0);
-        assert(h > 0);
-        assert(mW > 0);
+        assert(!b.empty() && "boxes must exist");
+        assert((l > 0) && "length must be greater than 0");
+        assert((wdth > 0) && "width must be greater than 0");
+        assert((h > 0) && "height must be greater than 0");
+        assert((mW > 0) && "maxWeight must be greater than 0");
         length = l;
         width = wdth;
         height = h;
@@ -30,7 +31,7 @@ namespace MyNameSpace {
     }
 
     void Container::setBoxes(const vector<Box> &boxes) {
-        assert(boxes.size() >= 0);
+        assert(&boxes!= nullptr && "Boxes should exist");
         Container::boxes = boxes;
     }
 
@@ -39,7 +40,7 @@ namespace MyNameSpace {
     }
 
     void Container::setLength(double length) {
-        assert(length > 0);
+        assert(length > 0 && "length must be greater than 0");
         Container::length = length;
     }
 
@@ -48,7 +49,7 @@ namespace MyNameSpace {
     }
 
     void Container::setWidth(double width) {
-        assert(width > 0);
+        assert(width > 0 && "width must be greater than 0");
         Container::width = width;
     }
 
@@ -57,7 +58,7 @@ namespace MyNameSpace {
     }
 
     void Container::setHeight(double height) {
-        assert(height > 0);
+        assert(height > 0 && "height must be greater than 0");
         Container::height = height;
     }
 
@@ -66,7 +67,7 @@ namespace MyNameSpace {
     }
 
     void Container::setMaxWeight(double maxWeight) {
-        assert(maxWeight > 0);
+        assert(maxWeight > 0 && "maxWeight must be positive");
         Container::maxWeight = maxWeight;
     }
 
@@ -95,7 +96,7 @@ namespace MyNameSpace {
 
 //получение коробки по индексу
     Box Container::getExactBoxIndex(int index) {
-        assert (boxes.size() >= index || index > 0);
+        assert (boxes.size() >= index || index > 0 && "Incorrect index");
         return boxes.at(index);
     }
 
@@ -108,7 +109,8 @@ namespace MyNameSpace {
 
 
 //добавить коробку в контейнер
-    int Container::addNewBox(Box boxToAdd) {
+    int Container::addNewBox(Box &boxToAdd) {
+        assert(&boxToAdd!= nullptr&&"Box to add must exist");
         double totalWeight = 0;
         for (Box box: boxes) {
             totalWeight += box.getWeight();
@@ -133,7 +135,8 @@ namespace MyNameSpace {
         os << " length: " << container.getLength() << " width: " << container.getWidth()
            << " height: " << container.getHeight() << " maxWeight: " << container.getMaxWeight();
         for (Box box: container.getBoxes()) {
-            os << "\nBOX\n" << "Length: " << box.getLength() << " Width: " << box.getWidth() << " Height: " << box.getHeight()
+            os << "\nBOX\n" << "Length: " << box.getLength() << " Width: " << box.getWidth() << " Height: "
+               << box.getHeight()
                << " Weight: " << box.getWeight() << " Value: " << box.getValue();
         }
 
@@ -158,16 +161,10 @@ namespace MyNameSpace {
     }
 
 
-    Box Container::getBoxIndex(int index) const {
+    Box Container::operator[](int index) {
         if (index < 0 || index >= boxes.size()) {
             throw ContainerException("Index out of range");
         }
-        return boxes.at(index);
-    }
-
-    void Container::changeBox(int index, Box boxToChange) const {
-        if (index < 0 || index >= boxes.size()) {
-            throw ContainerException("Index out of range");
-        }
+        return boxes[index];
     }
 }
