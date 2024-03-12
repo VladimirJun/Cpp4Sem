@@ -133,6 +133,7 @@ public:
     bool operator>(const DynamicIntArray &other) const {
         assert(&other != nullptr && "Other array should exist");
         return !(*this > other);
+
     }
 
     // Оператор >=
