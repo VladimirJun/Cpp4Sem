@@ -1,150 +1,192 @@
 #include <iostream>
 #include <cassert>
+#include <exception>
+#include "DynamicArray.h"
 
-class DynamicIntArray {
-private:
-    int *arr;
-    int size;
-    int reserveSize{};
+//инициализирую пустой массив длины по умолчанию (1)
+DynamicIntArray::DynamicIntArray(){
+    try {
+        size=1;
+        capacity= size * 2;
+        arr = new int[size + capacity];
+        arr[0] = 1;
+    } catch (const std::bad_alloc &e) {
+        std::cerr << "Memory allocation failed: " << e.what() << std::endl;
+        throw std::bad_alloc();
+    }
+}
 
-
-public:
-    // Конструктор по умолчанию
-    DynamicIntArray() : arr(nullptr), size(0), reserveSize(0) {}
-
-    // Конструктор по размеру(все элементы инициализируются 0)
-    explicit DynamicIntArray(int size) : size(size) {
-        assert(size > 0 && "Size must be positive");
-        arr = new int[size];
+//массив длины s, все элементы инициализируются 0
+DynamicIntArray::DynamicIntArray(int s) {
+    assert(s > 0 && "Size must be positive");
+    try {
+        size = s;
+        capacity = s * 2;
+        arr = new int[size + capacity];
         for (int i = 0; i < size; i++) {
             arr[i] = 0;
         }
+    } catch (std::bad_alloc &e) {
+        std::cerr << "Memory allocation failed: " << e.what() << std::endl;
+        throw std::bad_alloc();
     }
+}
 
-    DynamicIntArray(int size, int n) {
-        assert(size > 0 && "Size must be positive");
-        arr = new int[size];
+//массив длины s, все элементы инициализируются n
+DynamicIntArray::DynamicIntArray(int s, int n) {
+    assert(s > 0 && "Size must be positive");
+    try {
+        size = s;
+        capacity = s * 2;
+        arr = new int[size + capacity];
         for (int i = 0; i < size; i++) {
             arr[i] = n;
         }
+    } catch (std::bad_alloc &e) {
+        std::cerr << "Memory allocation failed: " << e.what() << std::endl;
+        throw std::bad_alloc();
     }
+}
 
-    //Конструктор по размеру, позволяющий задать размер резерва массива, все элементы инициализируются значением value
-    DynamicIntArray(int n, int value, int reserveSize) : size(n), reserveSize(reserveSize) {
-        arr = new int[size + reserveSize];
-        for (int i = 0; i < size + reserveSize; i++) {
-            arr[i] = value;
-        }
-    }
+// Конструктор копирования
+DynamicIntArray::DynamicIntArray(const DynamicIntArray &other) {
 
-    // Конструктор копирования
-    DynamicIntArray(const DynamicIntArray &other) : size(other.size), reserveSize(other.reserveSize) {
-        arr = new int[size + reserveSize];
+    assert(&other != nullptr && "Other array must exist");
+    try {
+        size = other.size;
+        capacity = other.capacity;
+        arr = new int[size + capacity];
         for (int i = 0; i < size; ++i) {
             arr[i] = other.arr[i];
         }
+    } catch (std::bad_alloc &e) {
+        std::cerr << "Memory allocation failed: " << e.what() << std::endl;
+        throw std::bad_alloc();
     }
+}
 
 
-    // Конструктор перемещения
-    DynamicIntArray(DynamicIntArray &&other) noexcept: arr(other.arr), size(other.size),
-                                                       reserveSize(other.reserveSize) {
-        other.arr = nullptr;
-        other.size = 0;
-        other.reserveSize = 0;
-    }
-
-    // Деструктор
-    ~DynamicIntArray() {
-        delete[] arr;
-    }
-
-    //геттеры и сеттеры
-    int *getArr() const {
-        return arr;
-    }
-
-    int getSize() const {
-        return size;
-    }
-
-    //Возвращает размер резерва
-    int capacity() const {
-        return reserveSize;
-    }
-
-    // Возвращает общий размер памяти
-    int getReservedMemory() const {
-        return size + reserveSize;
-    }
+// Конструктор перемещения
+DynamicIntArray::DynamicIntArray(DynamicIntArray &&other) {
+    assert(&other != nullptr && "Other array must exist");
+    size = other.size;
+    arr = other.arr;
+    capacity = other.capacity;
+    other.arr = nullptr;
+}
 
 
-    // Доступ к элементу по индексу
-    int &operator[](int index) {
-        assert(index <= size);
-        return arr[index];
-    }
+// Деструктор
+DynamicIntArray::~DynamicIntArray() {
+    delete[] arr;
+}
 
-    // Оператор присваивания
-    DynamicIntArray &operator=(const DynamicIntArray &other) {
-        assert(&other != nullptr && "Array to move must exist");
+//Возвращает размер резерва
+int DynamicIntArray::getCapacity() const {
+    return capacity;
+}
+
+
+// Оператор присваивания
+DynamicIntArray &DynamicIntArray::operator=(const DynamicIntArray &other) {
+    assert(&other != nullptr && "Array to move must exist");
+    try {
         if (this != &other) {
             delete[] arr;
             size = other.size;
-            arr = new int[size];
+            capacity = other.capacity;
+            arr = new int[size + capacity];
             for (int i = 0; i < size; ++i) {
                 arr[i] = other.arr[i];
             }
         }
-        return *this; //указатель на текущий объект данного класса (присвоенный)
+    } catch (std::bad_alloc &e) {
+        std::cerr << "Memory allocation failed: " << e.what() << std::endl;
+        throw std::bad_alloc();
     }
+    return *this; //указатель на текущий объект данного класса (присвоенный)
+}
 
-    // Оператор ==
-    bool operator==(const DynamicIntArray &other) const {
-        assert(size == other.size && "Arrays must have equal lengths");
-        for (int i = 0; i < size; ++i) {
-            if (arr[i] != other.arr[i]) {
-                return false;
+DynamicIntArray &DynamicIntArray::operator=(DynamicIntArray &&other) {
+    assert(&other != nullptr && "Array to move must exist");
+    try {
+        if (this != &other) {
+            delete[] arr;
+            size = other.size;
+            capacity = other.capacity;
+            arr = new int[size + capacity];
+            for (int i = 0; i < size; ++i) {
+                arr[i] = other.arr[i];
             }
+            size = other.size;
+            arr = other.arr;
+            capacity = other.capacity;
+            other.arr = nullptr;
         }
-        return true;
+    } catch (std::bad_alloc &e) {
+        std::cerr << "Memory allocation failed: " << e.what() << std::endl;
+        throw std::bad_alloc();
     }
+    return *this; //указатель на текущий объект данного класса (присвоенный)
+}
 
-    // Оператор !=
-    bool operator!=(const DynamicIntArray &other) const {
-        assert(&other == nullptr && "Other array should exist");
-        return !(*this == other);
+
+// Оператор ==
+bool DynamicIntArray::operator==(const DynamicIntArray &other) const {
+    if (&other == nullptr) return false;
+    if (size != other.size) {
+        throw std::invalid_argument("Arrays must have equal lengths");
     }
-
-    // Оператор <
-    bool operator<(const DynamicIntArray &other) const {
-        assert(&other == nullptr && "Other array should exist");
-        return std::lexicographical_compare(arr, arr + size, other.arr, other.arr + other.size);
-
+    for (int i = 0; i < size; ++i) {
+        if (arr[i] != other.arr[i]) {
+            return false;
+        }
     }
+    return true;
+}
 
-    // Оператор <=
-    bool operator<=(const DynamicIntArray &other) const {
-        assert(&other != nullptr && "Other array should exist");
-        return *this < other || *this == other;
+// Оператор !=
+bool DynamicIntArray::operator!=(const DynamicIntArray &other) const {
+    assert(&other != nullptr && "Other array should exist");
+    return !(*this == other);
+}
+
+// Оператор <
+bool DynamicIntArray::operator<(const DynamicIntArray &other) const {
+    assert(&other != nullptr && "Other array should exist");
+    for (int i = 0; i < std::min(size,other.size); ++i) {
+        if (arr[i] < other.arr[i]) {
+            return true;
+        } else if (arr[i] >= other.arr[i]) {
+            return false;
+        }
     }
+}
 
-    // Оператор >
-    bool operator>(const DynamicIntArray &other) const {
-        assert(&other != nullptr && "Other array should exist");
-        return !(*this > other);
+// Оператор <=
+bool DynamicIntArray::operator<=(const DynamicIntArray &other) const {
+    assert(&other != nullptr && "Other array should exist");
+    if (size!=other.size){ return size<other.size;
+    }else return (*this==other||*this<other);
+}
 
-    }
+// Оператор >
+bool DynamicIntArray::operator>(const DynamicIntArray &other) const {
+    assert(&other != nullptr && "Other array should exist");
+    return !(*this < other);
 
-    // Оператор >=
-    bool operator>=(const DynamicIntArray &other) const {
-        assert(&other == nullptr && "Other array should exist");
-        return !(*this >= other);
-    }
+}
 
-    // Оператор +
-    DynamicIntArray operator+(const DynamicIntArray &other) const {
-        assert(&other != nullptr && "Other array should exist");
+// Оператор >=
+bool DynamicIntArray::operator>=(const DynamicIntArray &other) const {
+    assert(&other == nullptr && "Other array should exist");
+    return !(*this < other) || (*this == other);
+}
+
+// Оператор +
+DynamicIntArray DynamicIntArray::operator+(const DynamicIntArray &other) const {
+    assert(&other != nullptr && "Other array should exist");
+    try {
         DynamicIntArray result(size + other.size);
 
         for (int i = 0; i < size; ++i) {
@@ -157,67 +199,112 @@ public:
 
         return result;
     }
-
-    //резервирование памяти
-    void reserve(int n) {
-        int *newArr = new int[size + n];
-        for (int i = 0; i < size; ++i) {
-            newArr[i] = arr[i];
-        }
-
-        delete[] arr;
-        arr = newArr;
-        reserveSize = n;
+    catch (std::bad_alloc &e) {
+        std::cerr << "Memory allocation failed: " << e.what() << std::endl;
+        throw std::bad_alloc();
     }
+}
+
+//резервирование памяти
+void DynamicIntArray::reserve(int n) {
+    assert(n > 0 && "Size of reserve must be positive");
+    if (n == capacity) {
+        return;
+    }
+    try {
+        const int newCapacity = n;
+        int *new_arr = new int[size + newCapacity];
+        std::copy(arr, arr + size, new_arr);
+        delete[] arr;
+        arr = new_arr;
+        capacity = newCapacity;
+    }
+    catch (std::bad_alloc &e) {
+        std::cerr << "Memory allocation failed: " << e.what() << std::endl;
+        throw e;
+    }
+}
 
 
-    // Изменение размера массива
-    void resize(int newSize) {
-        if (newSize <= size) {
-            size = newSize;
-        } else {
-            reserve(newSize - size);
-            for (int i = size; i < newSize; ++i) {
+// Изменение размера массива
+void DynamicIntArray::resize(int newSize) {
+    assert(newSize > 0 && "Size should be positive");
+    try {
+        if (newSize == size) {
+            return;
+        }
+        if (newSize > capacity + size) {
+            reserve(2 * newSize);
+            for (int i = size; i < newSize; i++) {
                 arr[i] = 0;
             }
             size = newSize;
+        } else {
+            size = newSize;
         }
+    } catch (std::bad_alloc &e) {
+        std::cerr << "Memory allocation failed: " << e.what() << std::endl;
+        throw std::bad_alloc();
     }
-
-    // Добавление элемента в конец массива
-    void pushBack(int x) {
-        resize(size + 1);
-        arr[size - 1] = x;
-    }
-
-    // Удаление элемента с конца массива
-    void popBack() {
-        if (size > 0) {
-            arr[size - 1];
-            size--;
-        }
-    }
-
-    // Оператор доступа к элементу массива
-    int &getElemFromIndex(int index) {
-        return arr[index];
-    }
-
-    // Оператор константного доступа к элементу массива
-    const int &operator[](int index) const {
-        return arr[index];
-    }
-
-};
-
-inline std::ostream &operator<<(std::ostream &os, const DynamicIntArray &array) {
-    return os << "arr: " << array.getArr() << " size: " << array.getSize() << " reserveSize: "
-              << array.getReservedMemory();
 }
 
-inline std::istream &operator>>(std::istream &in, DynamicIntArray &arr) {
-    for (int i = 0; i < arr.getSize(); ++i) {
-        in >> arr.getElemFromIndex(i);
+
+// Добавление элемента в конец массива
+void DynamicIntArray::pushBack(int x) {
+    if (capacity == 0) {
+        reserve(size * 2);
     }
-    return in;
+    arr[size] = x;
+    size++;
+    capacity--;
+
 }
+
+// Удаление элемента с конца массива
+void DynamicIntArray::popBack() {
+    if (size > 0) {
+        size--;
+    }
+}
+
+
+// Доступ к элементу по индексу
+int &DynamicIntArray::operator[](int index) {
+    assert(size >= index && "Index must be less than size");
+    assert(index >= 0 && "Index must be positive");
+    return arr[index];
+}
+
+// Оператор константного доступа к элементу массива
+int DynamicIntArray::operator[](int index) const {
+    assert(size >= index && "Index must be less than size");
+    assert(index >= 0 && "Index must be positive");
+    return arr[index];
+}
+
+int *DynamicIntArray::getArr() {
+    assert(arr != nullptr && "Array must exist");
+    return arr;
+}
+
+int DynamicIntArray::getSize() const {
+    return size;
+}
+
+
+std::ostream &operator<<(std::ostream &os, DynamicIntArray &array) {
+    for (int i = 0; i < array.getSize(); i++) {
+        os << array[i] << " ";
+    }
+    return os;
+}
+
+std::istream &operator>>(std::istream &is, DynamicIntArray &arr) {
+    assert(&arr != nullptr && "Array must exist");
+    for (int i = 0; i < arr.getSize(); i++) {
+        int v = arr[i];
+        is >> v;
+    }
+    return is;
+}
+
